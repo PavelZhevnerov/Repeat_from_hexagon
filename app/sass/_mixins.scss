@@ -1,0 +1,15 @@
+@function rem($px) {
+  @return $px / $fz + 0rem;
+}
+
+// @include font("NameFont", "path");
+@mixin font($alias, $name) {
+  @font-face {
+	font-family: $alias;
+	src: url("../fonts/" + $name + ".eot");
+	src: url("../fonts/" + $name + ".woff2") format("woff2"),
+		   url("../fonts/" + $name + ".woff") format("woff"),
+		   url("../fonts/" + $name + ".ttf") format("truetype");
+	     @content;
+  }
+}
