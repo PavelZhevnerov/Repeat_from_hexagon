@@ -19,7 +19,7 @@ function playGame() {
 		this.strict = false;
 	};
 
-	//ф-ция состояния игры/уровня
+	//ф-ция состояния игры
 	gameStatus.init = function () {
 		this.lastPush = $('#0');//последний добавленный
 		this.sequence = [];//последовательность
@@ -111,7 +111,6 @@ function playGame() {
 			if (pushObj)
 				pushObj.removeClass('light');
 			gameStatus.toHndlSt = setTimeout(function () {
-				//displayNotification('Listen!');
 				if (gameStatus.strict)
 					gameStart()
 				else
@@ -164,7 +163,7 @@ function playGame() {
 
 	//ф-ция воспроизведения последовательности
 	function playSequence() {
-		displayNotification('Listen me!');
+		displayNotification('Listen to me!');
 		var i = 0;
 		gameStatus.index = 0;
 		gameStatus.seqHndl = setInterval(function () {
@@ -177,7 +176,7 @@ function playGame() {
 				clearInterval(gameStatus.seqHndl);
 				buttonHex.removeClass('unclickable').addClass('clickable');
 				gameStatus.lock = false;
-				displayNotification('Repeat from me!', 1000);
+				displayNotification('Repeat after me!', 1000);
 				gameStatus.toHndl = setTimeout(notifyError, 5 * gameStatus.timeStep);
 			}
 		}, gameStatus.timeStep);
@@ -188,7 +187,6 @@ function playGame() {
 		gameStatus.timeStep = setTimeStep(gameStatus.count++);//время шага для воспроизведения
 		gameStatus.sequence.push(Math.floor(Math.random() * 6));//получить случайное число и добавить в последовательность
 		gameStatus.toHndl = setTimeout(playSequence, 500);//воспроизвести последовательность
-		//displayNotification('Listen');
 	};
 
 	//ф-ция сброса таймера
@@ -246,7 +244,7 @@ function playGame() {
 	switchSlot.click(function () {
 		buttonSwitch.toggleClass('sw-on');
 		if (buttonSwitch.hasClass('sw-on') == false) {
-			displayNotification('Click on toggle!');
+			displayNotification('Click on the switch!');
 			gameStatus.reset();
 			display.text('--');
 			display.addClass('led-off');
