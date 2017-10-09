@@ -10,6 +10,8 @@ function playGame() {
 		buttonSwitch = $('#pwr-sw'),
 		buttonHex = $('.hex-btn'),
 		buttonControl = $('.btn');
+	var ramp = 0.05,
+		vol = 0.5;
 
 	var gameStatus = {}; //игра
 
