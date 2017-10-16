@@ -13,33 +13,29 @@ function playGame() {
 	var ramp = 0.05,
 		vol = 0.5;
 
-	var gameStatus = {}; //игра
+	var gameStatus = {};
 
-	//ф-ция очистки статуса игры
 	gameStatus.reset = function () {
 		this.init();
 		this.strict = false;
 	};
 
-	//ф-ция состояния игры
 	gameStatus.init = function () {
-		this.lastPush = $('#0');//последний добавленный
-		this.sequence = [];//последовательность
+		this.lastPush = $('#0');
+		this.sequence = [];
 		this.tStepInd = 0;
 		this.index = 0;
 		this.count = 0;
 		this.lock = false;
 	};
 
-	//проигрывание правильного нажатия
 	function playGoodTone(num) {
 		gainNodes[num].gain
-			.linearRampToValueAtTime(vol, audioCtx.currentTime + ramp);//постепеннное линейное изменение аудиосигнала с vol до audioCtx.currentTime - увеличивающаяся временная метка
+			.linearRampToValueAtTime(vol, audioCtx.currentTime + ramp);
 		gameStatus.currPush = $('#' + num);
 		gameStatus.currPush.addClass('light');
 	};
 
-	//завершение проигрывания правильного нажатия
 	function stopGoodTones() {
 		if (gameStatus.currPush)
 			gameStatus.currPush.removeClass('light');
@@ -50,17 +46,14 @@ function playGame() {
 		gameStatus.currOsc = undefined;
 	};
 
-	//проигрывание ошибочного нажатия
 	function playErrTone() {
 		errNode.gain.linearRampToValueAtTime(vol, audioCtx.currentTime + ramp);
 	};
 
-	//завершение проигрывания ошибочного нажатия
 	function stopErrTone() {
 		errNode.gain.linearRampToValueAtTime(0, audioCtx.currentTime + ramp);
 	};
 
-	//вывод информации
 	function displayNotification(hint, time) {
 		time = time ? time : 0;
 		var setTime = setTimeout(function () {
@@ -68,7 +61,6 @@ function playGame() {
 		}, time);
 	}
 
-	//определение выбранной сложности игры
 	function getDifficult() {
 		difficultGame = $('input[name=diff]:checked').val();
 		if (!difficultGame) {
@@ -76,19 +68,17 @@ function playGame() {
 		}
 	}
 
-	//начало игры
 	function gameStart() {
-		resetTimers();//сбросить таймер
-		stopGoodTones();//остановить воспроизведение сигнала
-		stopErrTone();//остановить воспроизведение ошибки
-		display.text('--').removeClass('led-off');//найти дисплей убрать класс
-		flashMessage('--', 1);//вывести инфу на дисплей
-		gameStatus.init();//проверить состояние игры
-		addStep();//следующий шаг
+		resetTimers();
+		stopGoodTones();
+		stopErrTone();
+		display.text('--').removeClass('led-off');
+		flashMessage('--', 1);
+		gameStatus.init();
+		addStep();
 		getDifficult();
 	}
 
-	//ф-ция задания времени на шаг/действие
 	function setTimeStep(num) {
 		var tSteps = [1250, 1000, 750, 500];
 		if (num < 4)
@@ -100,14 +90,13 @@ function playGame() {
 		return tSteps[3];
 	}
 
-	//извещение об ошибке
 	function notifyError(pushObj) {
 		gameStatus.lock = true;
-		buttonHex.removeClass('clickable').addClass('unclickable');//сделать кнопки некликабельными
-		playErrTone();//воспроизвести сигнал об ошибке
+		buttonHex.removeClass('clickable').addClass('unclickable');
+		playErrTone();
 		displayNotification('You are wrong!');
 		if (pushObj)
-			pushObj.addClass('light');//осветлить нажатую кнопку
+			pushObj.addClass('light');
 		gameStatus.toHndl = setTimeout(function () {
 			stopErrTone();
 			if (pushObj)
@@ -122,7 +111,6 @@ function playGame() {
 		flashMessage('!!', 2);
 	};
 
-	//извещение о выйгрыше
 	function notifyWin() {
 		var cnt = 0;
 		var last = gameStatus.lastPush.attr('id');
@@ -138,12 +126,11 @@ function playGame() {
 		displayNotification('You win!!!');
 	}
 
-	//ф-ция вывода инфы на экран
 	function flashMessage(msg, times) {
 		display.text(msg);
 		var lf = function () {
 			display.addClass('led-off');
-			gameStatus.toHndlFl = setTimeout(function () {//мерцание дисплея
+			gameStatus.toHndlFl = setTimeout(function () {
 				display.removeClass('led-off');
 			}, 250);
 		};
@@ -157,13 +144,11 @@ function playGame() {
 		}, 500)
 	};
 
-	//вывод номера уровня
 	function displayCount() {
 		var p = (gameStatus.count < 10) ? '0' : '';
 		display.text(p + (gameStatus.count + ''));
 	}
 
-	//ф-ция воспроизведения последовательности
 	function playSequence() {
 		displayNotification('Listen to me!');
 		var i = 0;
@@ -184,14 +169,12 @@ function playGame() {
 		}, gameStatus.timeStep);
 	};
 
-	//ф-ция следующего уровня/шага
 	function addStep() {
-		gameStatus.timeStep = setTimeStep(gameStatus.count++);//время шага для воспроизведения
-		gameStatus.sequence.push(Math.floor(Math.random() * 6));//получить случайное число и добавить в последовательность
-		gameStatus.toHndl = setTimeout(playSequence, 500);//воспроизвести последовательность
+		gameStatus.timeStep = setTimeStep(gameStatus.count++);
+		gameStatus.sequence.push(Math.floor(Math.random() * 6));
+		gameStatus.toHndl = setTimeout(playSequence, 500);
 	};
 
-	//ф-ция сброса таймера
 	function resetTimers() {
 		clearInterval(gameStatus.seqHndl);
 		clearInterval(gameStatus.flHndl);
@@ -201,9 +184,9 @@ function playGame() {
 	};
 
 	function pushColor(pushObj) {
-		if (!gameStatus.lock) {//если игра не заблокирована
+		if (!gameStatus.lock) {
 			clearTimeout(gameStatus.toHndl);
-			var pushNr = pushObj.attr('id');//получить id нажатого элемента/кнопки
+			var pushNr = pushObj.attr('id');
 			if (pushNr == gameStatus.sequence[gameStatus.index]
 				&& gameStatus.index < gameStatus.sequence.length) {
 
@@ -236,13 +219,11 @@ function playGame() {
 			stopGoodTones();
 	});
 
-	//изменение индикатора строгого режима
 	function toggleStrict() {
 		ledMode.toggleClass('led-on');
 		gameStatus.strict = !gameStatus.strict;
 	}
 
-	//запуск игры
 	switchSlot.click(function () {
 		buttonSwitch.toggleClass('sw-on');
 		if (buttonSwitch.hasClass('sw-on') == false) {
